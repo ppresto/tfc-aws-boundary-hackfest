@@ -1,6 +1,6 @@
 <!-- TOC -->
 
-- [Boundary Hackathon Report](#boundary-hackathon-report)
+- [Boundary Hackfest](#boundary-hackfest)
   - [EKS](#eks)
     - [UI / CLI Setup](#ui--cli-setup)
       - [Install the Boundary CLI.](#install-the-boundary-cli)
@@ -23,7 +23,7 @@
     - [Connect to internal EC2 instance on private network](#connect-to-internal-ec2-instance-on-private-network)
 
 <!-- /TOC -->
-# Boundary Hackathon Report
+# Boundary Hackfest
 
 Use cases:
 * EKS: Setup HCP Boundary to allow local kubectl commands to EKS Cluster
