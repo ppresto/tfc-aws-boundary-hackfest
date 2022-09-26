@@ -1,0 +1,77 @@
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: api
+  labels:
+    name: api
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api
+  namespace: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: api
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 9091
+      targetPort: 9091
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment-v1
+  namespace: api
+  labels:
+    app: api
+    version: v1
+    service: fake-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      namespace: api
+      labels:
+        app: api
+        service: fake-service
+      annotations:
+    spec:
+      serviceAccountName: api
+      containers:
+        - name: api
+          image: nicholasjackson/fake-service:v0.21.0
+          ports:
+            - containerPort: 9091
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9091'
+            - name: 'UPSTREAM_URIS'
+              value: 'http://cache.cache-ns:9090, http://payments.payments-ns:9090'
+            - name: 'NAME'
+              value: 'api-v1'
+            - name: 'MESSAGE'
+              value: 'API response'
+            - name: 'SERVER_TYPE'
+              value: 'http'
+            - name: 'TIMING_50_PERCENTILE'
+              value: '20ms'
+            - name: 'TIMING_90_PERCENTILE'
+              value: '30ms'
+            - name: 'TIMING_99_PERCENTILE'
+              value: '40ms'
+            - name: 'TIMING_VARIANCE'
+              value: '10'
+            - name: 'HTTP_CLIENT_APPEND_REQUEST'
+              value: 'true'
+            - name: 'TRACING_ZIPKIN'
+              value: 'http://simplest-collector:9411'

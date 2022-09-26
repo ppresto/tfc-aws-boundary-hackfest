@@ -1,0 +1,70 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: cache-ns
+  labels:
+    name: cache
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cache
+  namespace: cache-ns
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache
+  namespace: cache-ns
+spec:
+  selector:
+    app: cache
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+  namespace: cache-ns
+  labels:
+    app: cache
+    service: fake-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cache
+  template:
+    metadata:
+      labels:
+        app: cache
+        service: fake-service
+      annotations:
+    spec:
+      serviceAccountName: cache
+      containers:
+        - name: cache
+          image: nicholasjackson/fake-service:v0.21.0
+          ports:
+            - containerPort: 9090
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9090'
+            - name: 'NAME'
+              value: 'cache'
+            - name: 'MESSAGE'
+              value: 'cache response'
+            - name: 'SERVER_TYPE'
+              value: 'http'
+            - name: 'TIMING_50_PERCENTILE'
+              value: '1ms'
+            - name: 'TIMING_90_PERCENTILE'
+              value: '2ms'
+            - name: 'TIMING_99_PERCENTILE'
+              value: '3ms'
+            - name: 'TIMING_VARIANCE'
+              value: '10'
+            - name: 'TRACING_ZIPKIN'
+              value: 'http://simplest-collector:9411'

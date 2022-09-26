@@ -1,0 +1,50 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: web
+spec:
+  destination:
+    name: web
+    namespace: default
+  sources:
+  - name: ingress-gateway
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api
+spec:
+  destination:
+    name: api
+  sources:
+  - name: web
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments
+spec:
+  destination:
+    name: payments
+    namespace: payments-ns
+  sources:
+  - name: api
+    namespace: default
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: currency
+spec:
+  destination:
+    name: currency
+    namespace: currency-ns
+  sources:
+  - name: api
+    namespace: defaul
+    action: allow
+---

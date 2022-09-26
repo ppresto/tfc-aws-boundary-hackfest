@@ -1,0 +1,26 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: web
+spec:
+  destination:
+    name: web
+    namespace: web
+  sources:
+  - name: ingress-gateway
+    namespace: default
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api
+spec:
+  destination:
+    name: api
+    namespace: api
+  sources:
+  - name: web
+    namespace: web
+    action: allow

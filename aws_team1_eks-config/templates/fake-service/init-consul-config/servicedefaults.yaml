@@ -1,0 +1,16 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: web
+  namespace: web
+spec:
+  protocol: "http"
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: api
+  namespace: api
+spec:
+  protocol: "http"
+---

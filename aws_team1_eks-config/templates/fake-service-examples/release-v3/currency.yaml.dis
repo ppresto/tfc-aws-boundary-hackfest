@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: currency
+  namespace: currency-ns
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: currency
+  namespace: currency-ns
+spec:
+  selector:
+    app: currency
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currency
+  namespace: currency-ns
+  labels:
+    app: currency
+    service: fake-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: currency
+  template:
+    metadata:
+      labels:
+        app: currency
+        service: fake-service
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/transparent-proxy: 'true'
+    spec:
+      serviceAccountName: currency
+      containers:
+        - name: currency
+          image: nicholasjackson/fake-service:v0.21.0
+          ports:
+            - containerPort: 9090
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9090'
+            - name: 'NAME'
+              value: 'currency'
+            - name: 'MESSAGE'
+              value: 'currency response'
+            - name: 'SERVER_TYPE'
+              value: 'http'
+            - name: 'ERROR_TYPE'
+              value: 'http_error'
+            - name: 'ERROR_RATE'
+              value: '0.0'
+            - name: 'ERROR_CODE'
+              value: '14'
+            - name: 'TRACING_ZIPKIN'
+              value: 'http://simplest-collector.default:9411'

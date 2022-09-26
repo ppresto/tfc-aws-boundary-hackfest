@@ -1,0 +1,45 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceRouter
+metadata:
+  name: api
+spec:
+  routes:
+    - match:
+        http:
+          header:
+            - name : baggage
+              regex: .*version=2.*
+      destination:
+        service: api
+        serviceSubset: v3
+        requestTimeout: 10s
+        numRetries: 3
+        retryOnConnectFailure: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceSplitter
+metadata:
+  name: api
+spec:
+  splits:
+    - weight: 0
+      serviceSubset: v1
+    - weight: 100
+      serviceSubset: v2
+    - weight: 0
+      serviceSubset: v3
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: api
+spec:
+  defaultSubset: v2
+  subsets:
+    v1:
+      filter: 'Service.Meta.version == v1'
+    v2:
+      filter: 'Service.Meta.version == v2'
+    v3:
+      filter: 'Service.Meta.version == v3'
+

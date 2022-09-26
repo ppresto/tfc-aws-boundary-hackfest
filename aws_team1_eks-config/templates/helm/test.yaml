@@ -1,0 +1,62 @@
+# https://github.com/hashicorp/consul-k8s/blob/main/charts/consul/values.yaml
+global:
+  name: team1
+  enabled: false
+  enableConsulNamespaces: true
+  datacenter: usw2
+  adminPartitions:
+    enabled: true
+    name: "default"
+  acls:
+    manageSystemACLs: true
+    bootstrapToken:
+      secretName: consul-bootstrap-token
+      secretKey: token
+  gossipEncryption:
+    secretName: consul-gossip-key
+    secretKey: key
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: consul-ca-cert
+      secretKey: tls.crt
+externalServers:
+  enabled: true
+  hosts: ["usw2.private.consul.328306de-41b8-43a7-9c38-ca8d89d06b07.aws.hashicorp.cloud"]
+  httpsPort: 443
+  useSystemRoots: true
+  k8sAuthMethodHost: https://BB484B9E59718B2B4FDCF28A81020510.sk1.us-west-2.eks.amazonaws.com
+client:
+  enabled: true
+  join: ["usw2.private.consul.328306de-41b8-43a7-9c38-ca8d89d06b07.aws.hashicorp.cloud"]
+dns:
+  enabled: true
+  enableRedirection: true
+  clusterIP: 172.20.128.87 # Needed to configure kube-dns forwarding
+connectInject:
+  enabled: true
+  transparentProxy:
+    defaultEnabled: true
+  metrics:
+    defaultEnabled: true # by default, this inherits from the value global.metrics.enabled
+    defaultEnableMerging: true
+  consulNamespaces:
+    mirroringK8S: true
+syncCatalog:
+  enabled: true
+  toConsul: false
+  toK8S: true
+controller:
+  enabled: true
+meshGateway:
+  enabled: true
+  replicas: 1
+ingressGateways:
+  enabled: true
+  defaults:
+    replicas: 1
+  gateways:
+    - name: ingress-gateway
+      service:
+        type: LoadBalancer

@@ -1,0 +1,14 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: payments-ns
+  labels:
+    name: payments
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: currency-ns
+  labels:
+    name: cache
+---
